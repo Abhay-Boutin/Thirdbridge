@@ -10,7 +10,7 @@ type Props = {
   rightComponent?: React.ReactNode
 }
 
-export const Klfgjhsoigbhb: FunctionComponent<PropsWithChildren<Props>> =
+export const PageContainer: FunctionComponent<PropsWithChildren<Props>> =
   ({ children, title, rightComponent = <View style={styles.right} /> }) => {
     const insets = useSafeAreaInsets()
     const { goBack } = useNavigation()

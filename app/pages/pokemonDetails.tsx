@@ -1,30 +1,29 @@
 import {DefaultError, InfiniteData, useInfiniteQuery} from "@tanstack/react-query"
 import React from "react"
-import {ActivityIndicator, FlatList, Pressable, StyleSheet} from "react-native"
+import {ActivityIndicator, FlatList, StyleSheet} from "react-native"
 import {useSafeAreaInsets} from "react-native-safe-area-context"
 
 import {PokemonService} from "../../src/services"
-import {PageContainer, PokemonCard, PokemonsFooter} from "../../src/components"
-import {Pokemon} from "../../src/models"
-import {Link} from "expo-router";
+import {PageContainer} from "../../src/components"
+import {PokemonDetailsModel} from "../../src/models/pokemonDetailsModel";
+import {PokemonDetailsCard} from "../../src/components/pokemon-detail-card";
 
 const PAGE_SIZE = 20
 
 export default function Page() {
   const insets = useSafeAreaInsets()
 
-  const {data, isLoading, isFetchingNextPage, fetchNextPage, hasNextPage} =
+  const {data, isLoading} =
     useInfiniteQuery<
-      Pokemon,
+      PokemonDetailsModel,
       DefaultError,
-      InfiniteData<Pokemon, number>,
+      InfiniteData<PokemonDetailsModel, number>,
       string[],
       number
     >({
-      queryKey: ['pokemons'],
-      queryFn: ({pageParam}) => PokemonService.getPokemons({
-        limit: PAGE_SIZE,
-        offset: pageParam
+      queryKey: ['pokemon'],
+      queryFn: ({pageParam}) => PokemonService.getPokemon({
+        id: 1
       }),
       initialPageParam: 0,
       getNextPageParam: (_, allPages) => allPages.length * PAGE_SIZE
@@ -41,19 +40,8 @@ export default function Page() {
           }]}
           renderItem={
             ({item, index}) => (
-              <Link href="/pages/pokemonDetails" asChild>
-                <Pressable>
-                  <PokemonCard item={item} isFirst={index === 0}/>
-                </Pressable>
-              </Link>
+              <PokemonDetailsCard item={item} isFirst={index === 0}/>
             )
-          }
-          ListFooterComponent={
-            <PokemonsFooter
-              isHidden={!hasNextPage}
-              onPress={fetchNextPage}
-              isLoading={isFetchingNextPage}
-            />
           }
         />
       )}
