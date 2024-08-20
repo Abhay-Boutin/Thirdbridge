@@ -25,7 +25,7 @@ export default function Page() {
   };
   console.log(scrollYPosition)
   console.log("HEIGHT: " + windowHeight)
-  console.log("Scroll percentage" + scrollYPosition / windowHeight)
+  console.log("Scroll percentage: " + scrollYPosition / windowHeight)
 
   const params = useLocalSearchParams<SearchParamType>();
   const {id, name} = params;
@@ -40,7 +40,7 @@ export default function Page() {
 
   return (
     <PageContainerDetails
-      isScrolled={true}
+      isScrolled={scrollYPosition / windowHeight >= 0.25}
       title={name ? name.charAt(0).toUpperCase() + name.slice(1) : "Unknown pokemon"}
       rightComponent={data && <Image
           style={styles.smallImage}
@@ -66,7 +66,7 @@ export default function Page() {
 
             <Text style={styles.title}>First 5 moves</Text>
             {
-              data?.moves.map(({move}, index) => <PokemonCard
+              data?.moves.slice(0, 5).map(({move}, index) => <PokemonCard
                 item={{name: move.name, url: move.url}} isFirst={index === 0}/>)
             }
             <Text style={styles.title}>Evolutions</Text>
