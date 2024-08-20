@@ -12,11 +12,11 @@ class PokemonServiceImpl {
   }
 
   async getPokemon(
-    {id}: { id?: string; }
+    {name}: { name?: string; }
   ) {
     const response =
       await axios.get(
-        `https://pokeapi.co/api/v2/pokemon/${id}`
+        `https://pokeapi.co/api/v2/pokemon/${name}`
       );
     return response.data;
   }

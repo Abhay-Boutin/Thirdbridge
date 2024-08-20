@@ -1,53 +1,69 @@
 import {DefaultError, useQuery} from "@tanstack/react-query"
 import React from "react"
-import {ActivityIndicator, Dimensions, FlatList, Image, ScrollView, StyleSheet, Text, View} from "react-native"
+import {ActivityIndicator, FlatList, Image, ScrollView, StyleSheet, Text, useWindowDimensions, View} from "react-native"
 
 import {PokemonService} from "../../src/services"
-import {PokemonCard} from "../../src/components"
+import {PageContainer, PokemonCard} from "../../src/components"
 import {useLocalSearchParams} from "expo-router";
 import {PokemonDetailsModel} from "../../src/models/pokemonDetailsModel";
 import {Colors} from "../../src/utils";
-import {PageContainerDetails} from "../../src/components/page-container-details";
+
+const MIN_IMAGE_SIZE = 32
 
 type SearchParamType = {
-  id: string;
   name: string;
 };
 
 
 export default function Page() {
   const [scrollYPosition, setScrollYPosition] = React.useState(0)
-  const windowHeight = Dimensions.get('window').height;
+  const {width: windowWidth, height: windowHeight} = useWindowDimensions();
 
   const handleScroll = (event: { nativeEvent: { contentOffset: { y: any } } }) => {
     const newScrollYPosition = event.nativeEvent.contentOffset.y
     setScrollYPosition(newScrollYPosition)
   };
-  console.log(scrollYPosition)
-  console.log("HEIGHT: " + windowHeight)
-  console.log("Scroll percentage: " + scrollYPosition / windowHeight)
 
   const params = useLocalSearchParams<SearchParamType>();
-  const {id, name} = params;
+  const {name} = params;
 
   const {data, isLoading} =
     useQuery<PokemonDetailsModel, DefaultError, PokemonDetailsModel>({
-      queryKey: ['pokemon', id], queryFn: () => PokemonService.getPokemon({
-        id: id
+      queryKey: ['pokemon', name], queryFn: () => PokemonService.getPokemon({
+        name
       })
     })
 
 
+  const headerImageSize = () => {
+    const originalSize = windowHeight * 0.25
+    const resizedSize = originalSize * (1 - scrollYPosition / windowHeight)
+    return resizedSize <= MIN_IMAGE_SIZE ? MIN_IMAGE_SIZE : resizedSize
+  }
+
+  const paddingRight = () => {
+    const padding = (1 - scrollYPosition / windowHeight) * (windowWidth / 6)
+    return padding <= 0 ? 0 : padding
+  }
+
+
   return (
-    <PageContainerDetails
-      isScrolled={scrollYPosition / windowHeight >= 0.25}
+    <PageContainer
+      paddingBottom={headerImageSize() - MIN_IMAGE_SIZE}
       title={name ? name.charAt(0).toUpperCase() + name.slice(1) : "Unknown pokemon"}
-      rightComponent={data && <Image
-          style={styles.smallImage}
-          source={{
-            uri: data.sprites.front_default,
-          }}
-      />
+      rightComponent={data &&
+          <Image
+              style={[styles.smallImage, {
+                height: headerImageSize(),
+                width: headerImageSize(),
+                position: "absolute",
+                top: -10,
+                right: paddingRight(),
+              }]}
+              source={{
+                uri: data.sprites.front_default,
+              }}
+          />
       }>
       <ScrollView onScroll={handleScroll}>
         {isLoading && <ActivityIndicator/>}
@@ -63,17 +79,18 @@ export default function Page() {
                 )
               }
             />
-
             <Text style={styles.title}>First 5 moves</Text>
             {
-              data?.moves.slice(0, 5).map(({move}, index) => <PokemonCard
-                item={{name: move.name, url: move.url}} isFirst={index === 0}/>)
+              data?.moves.slice(0, 5).map(({move}, index) =>
+                <PokemonCard key={index}
+                             item={{name: move.name, url: move.url}}
+                             isFirst={index === 0}/>)
             }
             <Text style={styles.title}>Evolutions</Text>
           </View>
         )}
       </ScrollView>
-    </PageContainerDetails>
+    </PageContainer>
   )
 }
 
@@ -102,9 +119,7 @@ const styles = StyleSheet.create({
     marginTop: 4
   },
   smallImage: {
-    height: 32,
-    width: 32,
-    alignItems: "flex-end"
+    alignSelf: "flex-end",
   },
   type: {
     paddingRight: 16
