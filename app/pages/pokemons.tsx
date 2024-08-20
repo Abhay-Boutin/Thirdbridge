@@ -43,7 +43,7 @@ export default function Page() {
             ({item, index}) => (
               <Link href={{
                 pathname: "/pages/pokemonDetails",
-                params: {name: item.name},
+                params: {pokemonName: item.name},
               }} asChild>
                 <Pressable>
                   <PokemonCard item={item} isFirst={index === 0}/>

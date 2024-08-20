@@ -1,17 +1,27 @@
 import {DefaultError, useQuery} from "@tanstack/react-query"
 import React from "react"
-import {ActivityIndicator, FlatList, Image, ScrollView, StyleSheet, Text, useWindowDimensions, View} from "react-native"
+import {
+  ActivityIndicator,
+  FlatList,
+  Image,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  useWindowDimensions,
+  View
+} from "react-native"
 
 import {PokemonService} from "../../src/services"
 import {PageContainer, PokemonCard} from "../../src/components"
-import {useLocalSearchParams} from "expo-router";
+import {Link, useLocalSearchParams} from "expo-router";
 import {PokemonDetailsModel} from "../../src/models/pokemonDetailsModel";
-import {Colors} from "../../src/utils";
+import {PokemonType} from "../../src/components/pokemon-type";
 
 const MIN_IMAGE_SIZE = 32
 
 type SearchParamType = {
-  name: string;
+  pokemonName: string;
 };
 
 
@@ -24,13 +34,19 @@ export default function Page() {
     setScrollYPosition(newScrollYPosition)
   };
 
-  const params = useLocalSearchParams<SearchParamType>();
-  const {name} = params;
+  const {pokemonName} = useLocalSearchParams<SearchParamType>();
 
   const {data, isLoading} =
     useQuery<PokemonDetailsModel, DefaultError, PokemonDetailsModel>({
-      queryKey: ['pokemon', name], queryFn: () => PokemonService.getPokemon({
-        name
+      queryKey: ['pokemon', pokemonName], queryFn: () => PokemonService.getPokemon({
+        name: pokemonName
+      })
+    })
+
+  const {data: allEvolutions, isLoading: isLoadingAllEvolutions} =
+    useQuery<Array<{ name: string, url: string }>, DefaultError, Array<{ name: string, url: string }>>({
+      queryKey: ['pokemonEvolution', pokemonName], queryFn: () => PokemonService.getPokemonEvolutions({
+        name: pokemonName
       })
     })
 
@@ -50,7 +66,7 @@ export default function Page() {
   return (
     <PageContainer
       paddingBottom={headerImageSize() - MIN_IMAGE_SIZE}
-      title={name ? name.charAt(0).toUpperCase() + name.slice(1) : "Unknown pokemon"}
+      title={pokemonName ? pokemonName.charAt(0).toUpperCase() + pokemonName.slice(1) : "Unknown pokemon"}
       rightComponent={data &&
           <Image
               style={[styles.smallImage, {
@@ -72,10 +88,9 @@ export default function Page() {
             <FlatList
               horizontal
               data={data.types.flat()}
-              contentContainerStyle={styles.type}
               renderItem={
                 ({item}) => (
-                  <Text style={styles.title}>{item.type.name}</Text>
+                  <PokemonType type={item.type.name}/>
                 )
               }
             />
@@ -86,7 +101,20 @@ export default function Page() {
                              item={{name: move.name, url: move.url}}
                              isFirst={index === 0}/>)
             }
-            <Text style={styles.title}>Evolutions</Text>
+            {allEvolutions && allEvolutions?.length > 0 && (<Text style={styles.title}>Evolutions</Text>)}
+            {
+              allEvolutions?.map(({name: evolutionName, url}, index) =>
+                <Link key={index} href={{
+                  pathname: "/pages/pokemonDetails",
+                  params: {pokemonName: evolutionName},
+                }} asChild>
+                  <Pressable>
+                    <PokemonCard
+                      item={{name: evolutionName, url}}
+                      isFirst={index === 0}/>
+                  </Pressable>
+                </Link>)
+            }
           </View>
         )}
       </ScrollView>
@@ -97,7 +125,7 @@ export default function Page() {
 
 const styles = StyleSheet.create({
   title: {
-    paddingTop: 10,
+    paddingVertical: 16,
     fontSize: 20,
     fontWeight: "700",
     lineHeight: 24.2,
@@ -105,23 +133,7 @@ const styles = StyleSheet.create({
   contentContainerStyle: {
     padding: 16,
   },
-  first: {
-    marginTop: 0
-  },
-  name: {
-    fontSize: 16,
-    fontWeight: "bold",
-    textTransform: "capitalize"
-  },
-  url: {
-    fontSize: 12,
-    color: Colors.GRAY,
-    marginTop: 4
-  },
   smallImage: {
     alignSelf: "flex-end",
   },
-  type: {
-    paddingRight: 16
-  }
 })

@@ -1,54 +1,42 @@
-/*
 import React from "react"
-import { StyleSheet, Text, View } from "react-native"
+import {ActivityIndicator, Image, StyleSheet, View} from "react-native"
+import {DefaultError, useQuery} from "@tanstack/react-query";
+import {PokemonService} from "../services";
 
-import { Pokemon } from "../models"
-import { Colors } from "../utils"
 
-
-interface IProps {
-  item: Pokemon
-  isFirst?: boolean
+interface Props {
+  type: string
 }
 
-type PokemonType =
 
-export const PokemonType: React.FunctionComponent<IProps> =
-  const getColor = () => {
-  switch () {
+export const PokemonType: React.FunctionComponent<Props> =
+  ({type}) => {
+    const {data: pokemonTypeUrl, isLoading} =
+      useQuery<string, DefaultError, string>({
+        queryKey: ['pokemonTypes', type],
+        queryFn: () => PokemonService.getPokemonTypeUrl({
+          type
+        })
+      })
 
-  }
-  }
-  ({ item, isFirst = false }) => {
     return (
-      <View style={[styles.card, isFirst && styles.first]}>
-        <Text style={styles.name}>{item.name}</Text>
-        <Text style={styles.url}>{item.url}</Text>
+      <View>
+        {isLoading && <ActivityIndicator/>}
+        {!isLoading && pokemonTypeUrl && (<Image
+          style={[styles.icon]}
+          source={{
+            uri: pokemonTypeUrl,
+          }}
+        />)}
       </View>
     )
+
   }
 
 const styles = StyleSheet.create({
-  card: {
-    flex: 1,
-    marginTop: 8,
-    backgroundColor: Colors.WHITE,
-    borderWidth: 1,
-    borderColor: Colors.GRAY,
-    padding: 8
-  },
-  first: {
-    marginRight: 0
-  },
-  name: {
-    fontSize: 16,
-    fontWeight: "bold",
-    textTransform: "capitalize"
-  },
-  url: {
-    fontSize: 12,
-    color: Colors.GRAY,
-    marginTop: 4
+  icon: {
+    height: 16,
+    width: 88,
+    marginRight: 16
   }
 })
-*/
