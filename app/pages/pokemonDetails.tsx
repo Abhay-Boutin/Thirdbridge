@@ -1,13 +1,12 @@
 import {DefaultError, useQuery} from "@tanstack/react-query"
 import React from "react"
-import {ActivityIndicator, FlatList, Image, StyleSheet, Text, View} from "react-native"
+import {ActivityIndicator, Dimensions, FlatList, Image, ScrollView, StyleSheet, Text, View} from "react-native"
 
 import {PokemonService} from "../../src/services"
 import {PokemonCard} from "../../src/components"
 import {useLocalSearchParams} from "expo-router";
 import {PokemonDetailsModel} from "../../src/models/pokemonDetailsModel";
 import {Colors} from "../../src/utils";
-import {useSafeAreaInsets} from "react-native-safe-area-context";
 import {PageContainerDetails} from "../../src/components/page-container-details";
 
 type SearchParamType = {
@@ -15,8 +14,19 @@ type SearchParamType = {
   name: string;
 };
 
+
 export default function Page() {
-  const insets = useSafeAreaInsets()
+  const [scrollYPosition, setScrollYPosition] = React.useState(0)
+  const windowHeight = Dimensions.get('window').height;
+
+  const handleScroll = (event: { nativeEvent: { contentOffset: { y: any } } }) => {
+    const newScrollYPosition = event.nativeEvent.contentOffset.y
+    setScrollYPosition(newScrollYPosition)
+  };
+  console.log(scrollYPosition)
+  console.log("HEIGHT: " + windowHeight)
+  console.log("Scroll percentage" + scrollYPosition / windowHeight)
+
   const params = useLocalSearchParams<SearchParamType>();
   const {id, name} = params;
 
@@ -39,35 +49,30 @@ export default function Page() {
           }}
       />
       }>
-      {isLoading && <ActivityIndicator/>}
-      {!isLoading && data && (
-        <View>
-          <FlatList
-            horizontal
-            data={data.types.flat()}
-            contentContainerStyle={[styles.contentContainerStyle, {
-              paddingBottom: insets.bottom
-            }]}
-            renderItem={
-              ({item}) => (
-                <Text style={styles.title}>{item.type.name}</Text>
-              )
+      <ScrollView onScroll={handleScroll}>
+        {isLoading && <ActivityIndicator/>}
+        {!isLoading && data && (
+          <View style={styles.contentContainerStyle}>
+            <FlatList
+              horizontal
+              data={data.types.flat()}
+              contentContainerStyle={styles.type}
+              renderItem={
+                ({item}) => (
+                  <Text style={styles.title}>{item.type.name}</Text>
+                )
+              }
+            />
+
+            <Text style={styles.title}>First 5 moves</Text>
+            {
+              data?.moves.map(({move}, index) => <PokemonCard
+                item={{name: move.name, url: move.url}} isFirst={index === 0}/>)
             }
-          />
-          <Text style={styles.title}>First 5 moves</Text>
-          <FlatList
-            data={data?.moves.slice(0, 5).flat()}
-            contentContainerStyle={[styles.contentContainerStyle, {
-              paddingBottom: insets.bottom
-            }]}
-            renderItem={
-              ({item, index}) => (
-                <PokemonCard item={{name: item.move.name, url: item.move.url}} isFirst={index === 0}/>
-              )
-            }
-          />
-        </View>
-      )}
+            <Text style={styles.title}>Evolutions</Text>
+          </View>
+        )}
+      </ScrollView>
     </PageContainerDetails>
   )
 }
@@ -75,20 +80,13 @@ export default function Page() {
 
 const styles = StyleSheet.create({
   title: {
+    paddingTop: 10,
     fontSize: 20,
     fontWeight: "700",
     lineHeight: 24.2,
-    marginLeft: 15,
   },
   contentContainerStyle: {
     padding: 16,
-  },
-  card: {
-    marginTop: 8,
-    backgroundColor: Colors.WHITE,
-    borderWidth: 1,
-    borderColor: Colors.GRAY,
-    padding: 8
   },
   first: {
     marginTop: 0
@@ -107,5 +105,8 @@ const styles = StyleSheet.create({
     height: 32,
     width: 32,
     alignItems: "flex-end"
+  },
+  type: {
+    paddingRight: 16
   }
 })
