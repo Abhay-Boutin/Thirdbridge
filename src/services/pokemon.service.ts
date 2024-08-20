@@ -12,7 +12,7 @@ class PokemonServiceImpl {
   }
 
   async getPokemon(
-    {id = 0}: { id?: number; }
+    {id}: { id?: string; }
   ) {
     const response =
       await axios.get(
