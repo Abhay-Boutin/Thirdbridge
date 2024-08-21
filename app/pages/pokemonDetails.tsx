@@ -51,30 +51,31 @@ export default function Page() {
     })
 
 
-  const headerImageSize = () => {
+  const getDynamicStyles = () => {
     const originalSize = windowHeight * 0.25
-    const resizedSize = originalSize * (1 - (scrollYPosition) / windowHeight)
-    return resizedSize <= MIN_IMAGE_SIZE ? MIN_IMAGE_SIZE : resizedSize
+    const scrollPercentage = scrollYPosition / windowHeight
+    const resizedSize = originalSize * (1 - scrollPercentage)
+    const padding = ((windowWidth / 2) - (resizedSize / 2)) * (1 - scrollPercentage)
+    return {
+      imageSize: resizedSize <= MIN_IMAGE_SIZE ? MIN_IMAGE_SIZE : resizedSize,
+      paddingRight: scrollPercentage > 1 ? 0 : padding,
+      paddingTop: scrollPercentage > 1 ? -10 : scrollPercentage * -10,
+    }
   }
-
-  const paddingRight = () => {
-    const padding = (1 - scrollYPosition / windowHeight) * (windowWidth / 6)
-    return padding <= 0 ? 0 : padding
-  }
-
+  const {imageSize, paddingRight, paddingTop} = getDynamicStyles()
 
   return (
     <PageContainer
-      paddingBottom={headerImageSize() - MIN_IMAGE_SIZE}
+      paddingBottom={imageSize - MIN_IMAGE_SIZE}
       title={pokemonName ? pokemonName.charAt(0).toUpperCase() + pokemonName.slice(1) : "Unknown pokemon"}
       rightComponent={pokemonDetails &&
           <Image
               style={[styles.smallImage, {
-                height: headerImageSize(),
-                width: headerImageSize(),
+                height: imageSize,
+                width: imageSize,
                 position: "absolute",
-                top: -10,
-                right: paddingRight(),
+                top: paddingTop,
+                right: paddingRight,
               }]}
               source={{
                 uri: pokemonDetails.sprites.front_default,
