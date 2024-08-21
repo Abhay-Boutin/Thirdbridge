@@ -10,11 +10,15 @@ interface IProps {
 }
 
 export const PokemonsFooter: React.FunctionComponent<IProps> =
-  ({ isHidden, isLoading, onPress }) => {
-    if (isHidden) return null
+  ({isHidden, isLoading, onPress}) => {
+    if (isHidden) {
+      return null
+    }
 
     const handlePress = () => {
-      if (!isLoading) onPress()
+      if (!isLoading) {
+        onPress()
+      }
     }
 
     return (

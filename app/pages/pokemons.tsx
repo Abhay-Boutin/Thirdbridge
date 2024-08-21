@@ -1,12 +1,12 @@
-import {DefaultError, InfiniteData, useInfiniteQuery} from "@tanstack/react-query"
+import { DefaultError, InfiniteData, useInfiniteQuery } from "@tanstack/react-query"
 import React from "react"
-import {ActivityIndicator, FlatList, Pressable, StyleSheet} from "react-native"
-import {useSafeAreaInsets} from "react-native-safe-area-context"
+import { ActivityIndicator, FlatList, Pressable, StyleSheet } from "react-native"
+import { useSafeAreaInsets } from "react-native-safe-area-context"
 
-import {PokemonService} from "../../src/services"
-import {PageContainer, PokemonCard, PokemonsFooter} from "../../src/components"
-import {Pokemon} from "../../src/models"
-import {Link} from "expo-router";
+import { PokemonService } from "../../src/services"
+import { PageContainer, PokemonCard, PokemonsFooter } from "../../src/components"
+import { Pokemon } from "../../src/models"
+import { Link } from "expo-router";
 
 const PAGE_SIZE = 20
 

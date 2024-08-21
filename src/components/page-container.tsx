@@ -1,9 +1,9 @@
-import {useNavigation} from "expo-router"
-import React, {FunctionComponent, PropsWithChildren} from "react"
-import {Pressable, StyleSheet, Text, View} from "react-native"
-import {useSafeAreaInsets} from "react-native-safe-area-context"
+import { useNavigation } from "expo-router"
+import React, { FunctionComponent, PropsWithChildren } from "react"
+import { Pressable, StyleSheet, Text, View } from "react-native"
+import { useSafeAreaInsets } from "react-native-safe-area-context"
 
-import {Colors} from "../utils"
+import { Colors } from "../utils"
 
 type Props = {
   title: string
@@ -36,7 +36,7 @@ export const PageContainer: FunctionComponent<PropsWithChildren<Props>> =
 
 const styles = StyleSheet.create({
   back: {
-    fontSize: 18,
+    fontSize: 15,
     textTransform: 'uppercase',
     fontWeight: 'bold'
   },
@@ -53,7 +53,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   title: {
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: 'bold',
     textAlign: 'center'
   },

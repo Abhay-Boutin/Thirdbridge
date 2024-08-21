@@ -1,4 +1,4 @@
-import {DefaultError, useQuery} from "@tanstack/react-query"
+import { DefaultError, useQuery } from "@tanstack/react-query"
 import React from "react"
 import {
   ActivityIndicator,
@@ -12,11 +12,11 @@ import {
   View
 } from "react-native"
 
-import {PokemonService} from "../../src/services"
-import {PageContainer, PokemonCard} from "../../src/components"
-import {Link, useLocalSearchParams} from "expo-router";
-import {PokemonDetailsModel} from "../../src/models/pokemonDetailsModel";
-import {PokemonType} from "../../src/components/pokemon-type";
+import { PokemonService } from "../../src/services"
+import { PageContainer, PokemonCard } from "../../src/components"
+import { Link, useLocalSearchParams } from "expo-router";
+import { PokemonDetailsModel } from "../../src/models/pokemonDetailsModel";
+import { PokemonType } from "../../src/components/pokemon-type";
 
 const MIN_IMAGE_SIZE = 32
 

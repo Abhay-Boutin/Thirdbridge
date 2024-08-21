@@ -1,5 +1,5 @@
 import axios from "axios";
-import {PokemonEvolutionChain} from "../models";
+import { PokemonEvolutionChain } from "../models";
 
 class PokemonServiceImpl {
   async getPokemons(

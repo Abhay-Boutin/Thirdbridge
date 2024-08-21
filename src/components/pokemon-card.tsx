@@ -11,7 +11,7 @@ interface IProps {
 }
 
 export const PokemonCard: React.FunctionComponent<IProps> =
-  ({ item, isFirst = false }) => {
+  ({item, isFirst = false}) => {
     return (
       <View style={[styles.card, isFirst && styles.first]}>
         <Text style={styles.name}>{item.name}</Text>
