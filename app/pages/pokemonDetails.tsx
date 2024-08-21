@@ -36,7 +36,7 @@ export default function Page() {
 
   const {pokemonName} = useLocalSearchParams<SearchParamType>();
 
-  const {data, isLoading} =
+  const {data: pokemonDetails, isLoading: isLoadingPokemonDetails} =
     useQuery<PokemonDetailsModel, DefaultError, PokemonDetailsModel>({
       queryKey: ['pokemon', pokemonName], queryFn: () => PokemonService.getPokemon({
         name: pokemonName
@@ -53,7 +53,7 @@ export default function Page() {
 
   const headerImageSize = () => {
     const originalSize = windowHeight * 0.25
-    const resizedSize = originalSize * (1 - scrollYPosition / windowHeight)
+    const resizedSize = originalSize * (1 - (scrollYPosition) / windowHeight)
     return resizedSize <= MIN_IMAGE_SIZE ? MIN_IMAGE_SIZE : resizedSize
   }
 
@@ -67,7 +67,7 @@ export default function Page() {
     <PageContainer
       paddingBottom={headerImageSize() - MIN_IMAGE_SIZE}
       title={pokemonName ? pokemonName.charAt(0).toUpperCase() + pokemonName.slice(1) : "Unknown pokemon"}
-      rightComponent={data &&
+      rightComponent={pokemonDetails &&
           <Image
               style={[styles.smallImage, {
                 height: headerImageSize(),
@@ -77,17 +77,17 @@ export default function Page() {
                 right: paddingRight(),
               }]}
               source={{
-                uri: data.sprites.front_default,
+                uri: pokemonDetails.sprites.front_default,
               }}
           />
       }>
       <ScrollView onScroll={handleScroll}>
-        {isLoading && <ActivityIndicator/>}
-        {!isLoading && data && (
+        {isLoadingPokemonDetails || isLoadingAllEvolutions && <ActivityIndicator/>}
+        {!isLoadingPokemonDetails && !isLoadingAllEvolutions && (
           <View style={styles.contentContainerStyle}>
             <FlatList
               horizontal
-              data={data.types.flat()}
+              data={pokemonDetails?.types.flat()}
               renderItem={
                 ({item}) => (
                   <PokemonType type={item.type.name}/>
@@ -96,7 +96,7 @@ export default function Page() {
             />
             <Text style={styles.title}>First 5 moves</Text>
             {
-              data?.moves.slice(0, 5).map(({move}, index) =>
+              pokemonDetails?.moves.slice(0, 5).map(({move}, index) =>
                 <PokemonCard key={index}
                              item={{name: move.name, url: move.url}}
                              isFirst={index === 0}/>)
