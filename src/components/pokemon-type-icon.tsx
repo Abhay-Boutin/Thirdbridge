@@ -9,7 +9,7 @@ interface Props {
 }
 
 
-export const PokemonType: React.FunctionComponent<Props> =
+export const PokemonTypeIcon: React.FunctionComponent<Props> =
   ({type}) => {
     const {data: pokemonTypeUrl, isLoading} =
       useQuery<string, DefaultError, string>({

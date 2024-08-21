@@ -13,12 +13,12 @@ import {
 } from "react-native"
 
 import { PokemonService } from "../../src/services"
-import { PageContainer, PokemonCard } from "../../src/components"
+import { PageContainer, PokemonCard, PokemonTypeIcon } from "../../src/components"
 import { Link, useLocalSearchParams } from "expo-router";
-import { PokemonDetailsModel } from "../../src/models/pokemonDetailsModel";
-import { PokemonType } from "../../src/components/pokemon-type";
+import { PokemonDetailsModel } from "../../src/models";
 
 const MIN_IMAGE_SIZE = 32
+const MAX_IMAGE_SIZE_PERCENTAGE = 0.25
 
 type SearchParamType = {
   pokemonName: string;
@@ -52,7 +52,7 @@ export default function Page() {
 
 
   const getDynamicStyles = () => {
-    const originalSize = windowHeight * 0.25
+    const originalSize = windowHeight * MAX_IMAGE_SIZE_PERCENTAGE
     const scrollPercentage = scrollYPosition / windowHeight
     const resizedSize = originalSize * (1 - scrollPercentage)
     const padding = ((windowWidth / 2) - (resizedSize / 2)) * (1 - scrollPercentage)
@@ -91,7 +91,7 @@ export default function Page() {
               data={pokemonDetails?.types.flat()}
               renderItem={
                 ({item}) => (
-                  <PokemonType type={item.type.name}/>
+                  <PokemonTypeIcon type={item.type.name}/>
                 )
               }
             />
