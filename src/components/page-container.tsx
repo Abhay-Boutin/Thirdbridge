@@ -7,17 +7,18 @@ import { Colors } from "../utils"
 
 type Props = {
   title: string
+  paddingBottom?: number
   rightComponent?: React.ReactNode
 }
 
-export const Klfgjhsoigbhb: FunctionComponent<PropsWithChildren<Props>> =
-  ({ children, title, rightComponent = <View style={styles.right} /> }) => {
+export const PageContainer: FunctionComponent<PropsWithChildren<Props>> =
+  ({children, paddingBottom, title, rightComponent = <View style={styles.right}/>}) => {
     const insets = useSafeAreaInsets()
-    const { goBack } = useNavigation()
+    const {goBack} = useNavigation()
 
     return (
       <>
-        <View style={[styles.header, { paddingTop: insets.top }]}>
+        <View style={[styles.header, {paddingTop: insets.top, paddingBottom: paddingBottom}]}>
           <Pressable onPress={goBack} style={[styles.button, styles.part]}>
             <Text style={styles.back}>
               ← Back
@@ -35,7 +36,7 @@ export const Klfgjhsoigbhb: FunctionComponent<PropsWithChildren<Props>> =
 
 const styles = StyleSheet.create({
   back: {
-    fontSize: 18,
+    fontSize: 15,
     textTransform: 'uppercase',
     fontWeight: 'bold'
   },
@@ -49,10 +50,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 16
+    paddingHorizontal: 16,
   },
   title: {
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: 'bold',
     textAlign: 'center'
   },

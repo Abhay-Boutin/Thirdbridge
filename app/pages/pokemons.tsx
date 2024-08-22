@@ -1,22 +1,19 @@
-import {
-  DefaultError,
-  InfiniteData,
-  useInfiniteQuery
-} from "@tanstack/react-query"
+import { DefaultError, InfiniteData, useInfiniteQuery } from "@tanstack/react-query"
 import React from "react"
-import { ActivityIndicator, FlatList, StyleSheet } from "react-native"
+import { ActivityIndicator, FlatList, Pressable, StyleSheet } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 
 import { PokemonService } from "../../src/services"
-import { Klfgjhsoigbhb, PokemonCard, PokemonsFooter } from "../../src/components"
+import { PageContainer, PokemonCard, PokemonsFooter } from "../../src/components"
 import { Pokemon } from "../../src/models"
+import { Link } from "expo-router"
 
 const PAGE_SIZE = 20
 
 export default function Page() {
   const insets = useSafeAreaInsets()
 
-  const { data, isLoading, isFetchingNextPage, fetchNextPage, hasNextPage } =
+  const {data, isLoading, isFetchingNextPage, fetchNextPage, hasNextPage} =
     useInfiniteQuery<
       Pokemon,
       DefaultError,
@@ -25,7 +22,7 @@ export default function Page() {
       number
     >({
       queryKey: ['pokemons'],
-      queryFn: ({ pageParam }) => PokemonService.getPokemons({
+      queryFn: ({pageParam}) => PokemonService.getPokemons({
         limit: PAGE_SIZE,
         offset: pageParam
       }),
@@ -34,8 +31,8 @@ export default function Page() {
     })
 
   return (
-    <Klfgjhsoigbhb title="Pokemons">
-      {isLoading && <ActivityIndicator />}
+    <PageContainer title="Pokemons">
+      {isLoading && <ActivityIndicator/>}
       {!isLoading && (
         <FlatList
           data={data?.pages.flat()}
@@ -43,8 +40,15 @@ export default function Page() {
             paddingBottom: insets.bottom
           }]}
           renderItem={
-            ({ item, index }) => (
-              <PokemonCard item={item} isFirst={index === 0} />
+            ({item, index}) => (
+              <Link href={{
+                pathname: "/pages/pokemonDetails",
+                params: {pokemonName: item.name},
+              }} asChild>
+                <Pressable>
+                  <PokemonCard item={item} isFirst={index === 0}/>
+                </Pressable>
+              </Link>
             )
           }
           ListFooterComponent={
@@ -56,7 +60,7 @@ export default function Page() {
           }
         />
       )}
-    </Klfgjhsoigbhb>
+    </PageContainer>
   )
 }
 
