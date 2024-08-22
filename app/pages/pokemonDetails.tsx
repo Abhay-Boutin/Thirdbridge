@@ -18,9 +18,13 @@ import { PokemonService } from "../../src/services"
 import { PageContainer, PokemonCard, PokemonTypeIcon } from "../../src/components"
 import { Link, useLocalSearchParams } from "expo-router"
 import { PokemonDetailsModel } from "../../src/models"
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const MIN_IMAGE_SIZE = 32
 const MAX_IMAGE_SIZE_PERCENTAGE = 0.25
+const MIN_PADDING_RIGHT = 0
+const MIN_PADDING_TOP = -10
+const MAX_MOVE_COUNT = 5
 
 type SearchParamType = {
   pokemonName: string
@@ -28,6 +32,7 @@ type SearchParamType = {
 
 
 export default function Page() {
+  const insets = useSafeAreaInsets()
   const [scrollYPosition, setScrollYPosition] = React.useState(0)
   const {width: windowWidth, height: windowHeight} = useWindowDimensions()
   const {pokemonName} = useLocalSearchParams<SearchParamType>()
@@ -50,7 +55,7 @@ export default function Page() {
     setScrollYPosition(newScrollYPosition)
   }
 
-  // COMMENT ONLY FOR TECHNICAL TEST: Maybe exact this and the image in another component, but it is only used here for now
+  // COMMENT ONLY FOR TECHNICAL TEST: Maybe extract this and the image in another component, but it is only used here once for now
   const getDynamicStyles = () => {
     const originalSize = windowHeight * MAX_IMAGE_SIZE_PERCENTAGE
     const scrollPercentage = (scrollYPosition / windowHeight)
@@ -58,8 +63,8 @@ export default function Page() {
     const padding = ((windowWidth / 2) - (resizedSize / 2)) * (1 - scrollPercentage)
     return {
       imageSize: resizedSize <= MIN_IMAGE_SIZE ? MIN_IMAGE_SIZE : resizedSize,
-      paddingRight: scrollPercentage > 1 ? 0 : padding,
-      paddingTop: scrollPercentage > 1 ? -10 : scrollPercentage * -10,
+      paddingRight: scrollPercentage > 1 ? MIN_PADDING_RIGHT : padding,
+      paddingTop: scrollPercentage > 1 ? MIN_PADDING_TOP : scrollPercentage * MIN_PADDING_TOP,
     }
   }
   const {imageSize, paddingRight, paddingTop} = getDynamicStyles()
@@ -81,10 +86,10 @@ export default function Page() {
               }}
           />
       }>
-      <ScrollView onScroll={handleScroll}>
+      <ScrollView scrollEventThrottle={20} onScroll={handleScroll}>
         {isLoadingPokemonDetails || isLoadingAllEvolutions && <ActivityIndicator/>}
         {!isLoadingPokemonDetails && !isLoadingAllEvolutions && (
-          <View style={styles.contentContainerStyle}>
+          <View style={[styles.contentContainerStyle, {paddingBottom: insets.bottom}]}>
             <FlatList
               horizontal
               data={pokemonDetails?.types.flat()}
@@ -96,7 +101,7 @@ export default function Page() {
             />
             <Text style={styles.title}>First 5 moves</Text>
             {
-              pokemonDetails?.moves.slice(0, 5).map(({move}, index) =>
+              pokemonDetails?.moves.slice(0, MAX_MOVE_COUNT).map(({move}, index) =>
                 <PokemonCard key={index}
                              item={{name: move.name, url: move.url}}
                              isFirst={index === 0}/>)

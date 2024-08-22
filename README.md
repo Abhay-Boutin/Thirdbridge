@@ -1,3 +1,13 @@
+# Technical test specifications
+
+The animation of the pokemon image is according to how much you scrolled. Considering we do not scroll much for a lot of
+pokemon since all information normally fits in one screen, we need to play some tricks to better demonstrate the full
+animation.
+
+**To see full animation**: Go in `pokemonDetails.tsx` at line 26 there is the `MAX_MOVE_COUNT` constant. Put its value
+to
+`30`. Then go to any pokemon details page and scroll down.
+
 # Instructions
 
 - Please fork this repo on your preferred git source
@@ -13,11 +23,12 @@
 
 > 💯 The technical test is the equivalent of user story.
 
-# **💡 Context**
+# **💡 Context**
 
-In POKE-1, the infinite list was implemented. We now have the `Pokemons` page, with all Pokemons listed. Not a lot of information is available though, so we need a screen to list the details of a Pokemon.
+In POKE-1, the infinite list was implemented. We now have the `Pokemons` page, with all Pokemons listed. Not a lot of
+information is available though, so we need a screen to list the details of a Pokemon.
 
-# **✅ Acceptance criteria**
+# **✅ Acceptance criteria**
 
 ### Header
 
