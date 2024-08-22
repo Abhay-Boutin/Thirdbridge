@@ -1,9 +1,11 @@
-import { DefaultError, useQuery } from "@tanstack/react-query"
+import { useQuery } from "@tanstack/react-query"
 import React from "react"
 import {
   ActivityIndicator,
   FlatList,
   Image,
+  NativeScrollEvent,
+  NativeSyntheticEvent,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -28,31 +30,30 @@ type SearchParamType = {
 export default function Page() {
   const [scrollYPosition, setScrollYPosition] = React.useState(0)
   const {width: windowWidth, height: windowHeight} = useWindowDimensions()
-
-  const handleScroll = (event: { nativeEvent: { contentOffset: { y: any } } }) => {
-    const newScrollYPosition = event.nativeEvent.contentOffset.y
-    setScrollYPosition(newScrollYPosition)
-  }
-
   const {pokemonName} = useLocalSearchParams<SearchParamType>()
 
   const {data: pokemonDetails, isLoading: isLoadingPokemonDetails} =
-    useQuery<PokemonDetailsModel, DefaultError, PokemonDetailsModel>({
-      queryKey: ['pokemon', pokemonName], queryFn: () => PokemonService.getPokemon({
+    useQuery<PokemonDetailsModel>({
+      queryKey: ['pokemonDetails', pokemonName], queryFn: () => PokemonService.getPokemon({
         name: pokemonName
       })
     })
-
   const {data: allEvolutions, isLoading: isLoadingAllEvolutions} =
-    useQuery<Array<{ name: string, url: string }>, DefaultError, Array<{ name: string, url: string }>>({
+    useQuery<Array<{ name: string, url: string }>>({
       queryKey: ['pokemonEvolution', pokemonName], queryFn: () => PokemonService.getPokemonEvolutions({
         name: pokemonName
       })
     })
 
+  const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+    const newScrollYPosition = event.nativeEvent.contentOffset.y
+    setScrollYPosition(newScrollYPosition)
+  }
+
+  // COMMENT ONLY FOR TECHNICAL TEST: Maybe exact this and the image in another component, but it is only used here for now
   const getDynamicStyles = () => {
     const originalSize = windowHeight * MAX_IMAGE_SIZE_PERCENTAGE
-    const scrollPercentage = scrollYPosition / windowHeight
+    const scrollPercentage = (scrollYPosition / windowHeight)
     const resizedSize = originalSize * (1 - scrollPercentage)
     const padding = ((windowWidth / 2) - (resizedSize / 2)) * (1 - scrollPercentage)
     return {
@@ -69,10 +70,9 @@ export default function Page() {
       title={pokemonName ? pokemonName.charAt(0).toUpperCase() + pokemonName.slice(1) : "Unknown pokemon"}
       rightComponent={pokemonDetails &&
           <Image
-              style={[styles.smallImage, {
+              style={[styles.pokemonImage, {
                 height: imageSize,
                 width: imageSize,
-                position: "absolute",
                 top: paddingTop,
                 right: paddingRight,
               }]}
@@ -101,10 +101,14 @@ export default function Page() {
                              item={{name: move.name, url: move.url}}
                              isFirst={index === 0}/>)
             }
-            {allEvolutions && allEvolutions?.length > 0 && (<Text style={styles.title}>Evolutions</Text>)}
+            {
+              allEvolutions && allEvolutions.length > 0 && (
+                <Text style={styles.title}>Evolutions</Text>
+              )
+            }
             {
               allEvolutions?.map(({name: evolutionName, url}, index) =>
-                <Link key={index} href={{
+                <Link push key={index} href={{
                   pathname: "/pages/pokemonDetails",
                   params: {pokemonName: evolutionName},
                 }} asChild>
@@ -133,7 +137,8 @@ const styles = StyleSheet.create({
   contentContainerStyle: {
     padding: 16,
   },
-  smallImage: {
+  pokemonImage: {
+    position: "absolute",
     alignSelf: "flex-end",
   },
 })

@@ -5,8 +5,8 @@ export const searchEvolutionChainForPokemon = (pokemonEvolutionChain: PokemonEvo
     return pokemonEvolutionChain
   } else if (pokemonEvolutionChain["evolves_to"]) {
     let result = undefined
-    for (const evolutions of pokemonEvolutionChain["evolves_to"]) {
-      result = searchEvolutionChainForPokemon(evolutions, pokemonName)
+    for (const evolution of pokemonEvolutionChain["evolves_to"]) {
+      result = searchEvolutionChainForPokemon(evolution, pokemonName)
     }
     return result
   }

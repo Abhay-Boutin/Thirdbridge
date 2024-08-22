@@ -1,6 +1,6 @@
 import React from "react"
 import { ActivityIndicator, Image, StyleSheet, View } from "react-native"
-import { DefaultError, useQuery } from "@tanstack/react-query"
+import { useQuery } from "@tanstack/react-query"
 import { PokemonService } from "../services"
 
 
@@ -12,7 +12,7 @@ interface Props {
 export const PokemonTypeIcon: React.FunctionComponent<Props> =
   ({type}) => {
     const {data: pokemonTypeUrl, isLoading} =
-      useQuery<string, DefaultError, string>({
+      useQuery<string>({
         queryKey: ['pokemonTypes', type],
         queryFn: () => PokemonService.getPokemonTypeUrl({
           type
