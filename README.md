@@ -1,12 +1,24 @@
 # Technical test specifications
 
+## Animation for the pokemon image
+
 The animation of the pokemon image is according to how much you scrolled. Considering we do not scroll much for a lot of
 pokemon since all information normally fits in one screen, we need to play some tricks to better demonstrate the full
 animation.
 
 **To see full animation**: Go in `pokemonDetails.tsx` at line 26 there is the `MAX_MOVE_COUNT` constant. Put its value
-to
-`30`. Then go to any pokemon details page and scroll down.
+to `30`. Then go to any pokemon details page and scroll down.
+
+## Linting
+
+Normally we would agree as a team to for the coding standards like if we use `;` in typescript and the spacing between
+brackets (`[]`). We would then implement a linter for the standards. In this test, I did not pay any specific attention
+to the linting.
+
+## Tests
+
+I would normally add unit tests for each component and functions added to the service. It was specified that we did not
+need to do tests for this technical test, so I did not add any.
 
 # Instructions
 
