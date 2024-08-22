@@ -1,7 +1,7 @@
 import React from "react"
 import { ActivityIndicator, Image, StyleSheet, View } from "react-native"
-import { DefaultError, useQuery } from "@tanstack/react-query";
-import { PokemonService } from "../services";
+import { DefaultError, useQuery } from "@tanstack/react-query"
+import { PokemonService } from "../services"
 
 
 interface Props {

@@ -14,27 +14,27 @@ import {
 
 import { PokemonService } from "../../src/services"
 import { PageContainer, PokemonCard, PokemonTypeIcon } from "../../src/components"
-import { Link, useLocalSearchParams } from "expo-router";
-import { PokemonDetailsModel } from "../../src/models";
+import { Link, useLocalSearchParams } from "expo-router"
+import { PokemonDetailsModel } from "../../src/models"
 
 const MIN_IMAGE_SIZE = 32
 const MAX_IMAGE_SIZE_PERCENTAGE = 0.25
 
 type SearchParamType = {
-  pokemonName: string;
-};
+  pokemonName: string
+}
 
 
 export default function Page() {
   const [scrollYPosition, setScrollYPosition] = React.useState(0)
-  const {width: windowWidth, height: windowHeight} = useWindowDimensions();
+  const {width: windowWidth, height: windowHeight} = useWindowDimensions()
 
   const handleScroll = (event: { nativeEvent: { contentOffset: { y: any } } }) => {
     const newScrollYPosition = event.nativeEvent.contentOffset.y
     setScrollYPosition(newScrollYPosition)
-  };
+  }
 
-  const {pokemonName} = useLocalSearchParams<SearchParamType>();
+  const {pokemonName} = useLocalSearchParams<SearchParamType>()
 
   const {data: pokemonDetails, isLoading: isLoadingPokemonDetails} =
     useQuery<PokemonDetailsModel, DefaultError, PokemonDetailsModel>({
@@ -49,7 +49,6 @@ export default function Page() {
         name: pokemonName
       })
     })
-
 
   const getDynamicStyles = () => {
     const originalSize = windowHeight * MAX_IMAGE_SIZE_PERCENTAGE

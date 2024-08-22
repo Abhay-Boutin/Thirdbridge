@@ -6,7 +6,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { PokemonService } from "../../src/services"
 import { PageContainer, PokemonCard, PokemonsFooter } from "../../src/components"
 import { Pokemon } from "../../src/models"
-import { Link } from "expo-router";
+import { Link } from "expo-router"
 
 const PAGE_SIZE = 20
 
